@@ -6,12 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
-import org.mracus.mapping.Measurement;
+import org.mracus.mapping.MeasurementDTO;
 import org.mracus.mapping.MeasurementResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class SensorEmulator {
     private final RestTemplate restTemplate = new RestTemplate();
@@ -40,7 +41,7 @@ public class SensorEmulator {
     public void showMeasurements(String getMeasurementsUrl) throws JsonProcessingException {
         MeasurementResponse response = restTemplate.getForObject(getMeasurementsUrl, MeasurementResponse.class);
         if (response != null) {
-            for (Measurement measurement : response.getMeasurements()) {
+            for (MeasurementDTO measurement : response.getMeasurements()) {
                 System.out.println("Sensor: " + measurement.getSensor().getName() +
                         "; Raining: " + measurement.getRaining() +
                         "; Temp: " + measurement.getValue());
@@ -57,14 +58,10 @@ public class SensorEmulator {
                 count = response.getMeasurements().size();
             }
 
-            double[] yTemp = new double[count];
-            double[] xValue = new double[count];
-            for (int i = 0; i < count; i++) {
-                yTemp[i] = response.getMeasurements().get(i).getValue();
-                xValue[i] = i + 1;
-            }
+            double[] yValue = response.getMeasurements().stream().mapToDouble(MeasurementDTO::getValue).toArray();
+            double[] xValue = IntStream.range(0, response.getMeasurements().size()).asDoubleStream().toArray();
 
-            XYChart xyChart = QuickChart.getChart("Temp measurements", "Count", "Degrees Celsius", "Temp", xValue, yTemp);
+            XYChart xyChart = QuickChart.getChart("Temp measurements", "Count", "Degrees Celsius", "Temp", xValue, yValue);
             new SwingWrapper<>(xyChart).displayChart();
         } else {
             System.out.println("Response is NULL");
@@ -80,11 +77,14 @@ public class SensorEmulator {
     public void postRandomMeasurements(String addMeasurementUrl, Map<String, String> sensorJsonData, int quantity) {
         Map<String, Object> measurementJsonData = new HashMap<>();
         Random random = new Random();
-        float value;
+        double value;
         boolean raining;
 
+        double minTemperature = -100;
+        double maxTemperature = 100;
+
         for (int i = 0; i < quantity; i++) {
-            value = -100 + random.nextFloat() * 200;
+            value = minTemperature + random.nextFloat() * (maxTemperature - minTemperature);
             raining = random.nextBoolean();
 
             measurementJsonData.put("value", value);

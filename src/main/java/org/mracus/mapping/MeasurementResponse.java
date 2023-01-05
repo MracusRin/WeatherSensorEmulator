@@ -3,13 +3,13 @@ package org.mracus.mapping;
 import java.util.List;
 
 public class MeasurementResponse {
-    private List<Measurement> measurements;
+    private List<MeasurementDTO> measurements;
 
-    public List<Measurement> getMeasurements() {
+    public List<MeasurementDTO> getMeasurements() {
         return measurements;
     }
 
-    public void setMeasurements(List<Measurement> measurements) {
+    public void setMeasurements(List<MeasurementDTO> measurements) {
         this.measurements = measurements;
     }
 }

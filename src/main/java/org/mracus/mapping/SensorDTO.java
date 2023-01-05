@@ -1,6 +1,6 @@
 package org.mracus.mapping;
 
-public class Sensor {
+public class SensorDTO {
     private String name;
 
     public String getName() {

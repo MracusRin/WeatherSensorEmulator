@@ -1,15 +1,15 @@
 package org.mracus.mapping;
 
-public class Measurement {
-    private Float value;
+public class MeasurementDTO {
+    private Double value;
     private Boolean raining;
-    private Sensor sensor;
+    private SensorDTO sensor;
 
-    public Float getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Float value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
@@ -21,11 +21,11 @@ public class Measurement {
         this.raining = raining;
     }
 
-    public Sensor getSensor() {
+    public SensorDTO getSensor() {
         return sensor;
     }
 
-    public void setSensor(Sensor sensor) {
+    public void setSensor(SensorDTO sensor) {
         this.sensor = sensor;
     }
 }
